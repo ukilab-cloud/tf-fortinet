@@ -210,13 +210,6 @@ variable "spoke_vpc_b_transit_b_subnet_cidr" {
   default     = "10.99.97.64/26"
 }
 
-
-# References to your FortiGate
-variable "ami" {
-  description = "Provide an AMI for the FortiGate instances"
-  default     = "automatically gathered by terraform modules"
-}
-
 variable "cidr_for_access" {
   description = "Provide a network CIDR for accessing the FortiGate instances"
   default     = "0.0.0.0/0"

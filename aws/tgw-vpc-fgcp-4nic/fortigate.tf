@@ -86,17 +86,13 @@ resource "aws_iam_role" "fortigate_role" {
 data "aws_iam_policy_document" "fortigate_policy_document" {
   statement {
     effect    = "Allow"
-    actions   = ["ec2:*"]
-    resources = ["*"]
-  }
-    statement {
-    effect    = "Allow"
-    actions   = ["vpc:*"]
-    resources = ["*"]
-  }
-    statement {
-    effect    = "Allow"
-    actions   = ["iam:*"]
+    actions   = [
+      "ec2:Describe*",
+      "ec2:AssociateAddress",
+      "ec2:AssignPrivateIpAddresses",
+      "ec2:UnassignPrivateIpAddresses",
+      "ec2:ReplaceRoute"
+    ]
     resources = ["*"]
   }
 }
@@ -111,66 +107,6 @@ resource "aws_iam_role_policy_attachment" "fortigate-attach" {
   role       = aws_iam_role.fortigate_role.name
   policy_arn = aws_iam_policy.fortigate_policy.arn
 }
-
-/* 
-resource "aws_iam_instance_profile" "APICall_profile" {
-  name = "APICall_profile"
-  role = aws_iam_role.APICallrole.name
-}
-
-resource "aws_iam_role" "APICallrole" {
-  name = "APICall_role"
-
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Action": "sts:AssumeRole",
-            "Principal": {
-              "Service": "ec2.amazonaws.com"
-            },
-            "Effect": "Allow",
-            "Sid": ""
-        }https://signin.aws.amazon.com/saml
-    ]
-}
-EOF
-}
-
-resource "aws_iam_policy" "APICallpolicy" {
-  name        = "APICall_policy"
-  path        = "/"
-  description = "Policies for the FGT APICall Role"
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement":
-      [
-        {
-          "Effect": "Allow",
-          "Action": 
-            [
-              "ec2:Describe*",
-              "ec2:AssociateAddress",
-              "ec2:AssignPrivateIpAddresses",
-              "ec2:UnassignPrivateIpAddresses",
-              "ec2:ReplaceRoute"
-            ],
-            "Resource": "*"
-        }
-      ]
-}
-EOF
-}
-
-resource "aws_iam_policy_attachment" "APICall-attach" {
-  name       = "APICall-attachment"
-  roles      = [aws_iam_role.APICallrole.name]
-  policy_arn = aws_iam_policy.APICallpolicy.arn
-}
- */
 
 ### Create all the eni interfaces
 
