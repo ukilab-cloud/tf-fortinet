@@ -1,13 +1,15 @@
-##############################################################################################################
-# VM LINUX for testing
-##############################################################################################################
-## Retrieve AMI info
+####################################
+# Ubuntu Linux hosts for testing ###
+####################################
+
+### Retrieve AMI info
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-*"]
   }
 
   filter {
@@ -106,11 +108,13 @@ resource "aws_security_group" "NSG-spoke-b-ssh-icmp-https" {
 }
 
 
-# test device in spoke1
+### Test device in spoke1
+
 resource "aws_instance" "instance-spoke-a" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.spoke_vpc_a_workload_a_subnet.id
+  private_ip             = cidrhost(var.spoke_vpc_a_workload_a_subnet_cidr, 10)
   vpc_security_group_ids = [aws_security_group.NSG-spoke-a-ssh-icmp-https.id]
   key_name               = var.keypair
 
@@ -121,11 +125,13 @@ resource "aws_instance" "instance-spoke-a" {
   }
 }
 
-# test device in spoke2
+### Test device in spoke2
+
 resource "aws_instance" "instance-spoke-b" {
   ami                    = data.aws_ami.ubuntu.id
   instance_type          = "t2.micro"
   subnet_id              = aws_subnet.spoke_vpc_b_workload_b_subnet.id
+  private_ip             = cidrhost(var.spoke_vpc_b_workload_b_subnet_cidr, 10)
   vpc_security_group_ids = [aws_security_group.NSG-spoke-b-ssh-icmp-https.id]
   key_name               = var.keypair
 

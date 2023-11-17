@@ -1,3 +1,7 @@
+############################################################
+### Generate and export SSH Keys for all VMs in this project
+############################################################
+
 resource "tls_private_key" "pk" {
    algorithm = "ED25519"
  }

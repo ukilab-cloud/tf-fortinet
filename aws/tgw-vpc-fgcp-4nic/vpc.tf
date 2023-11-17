@@ -132,17 +132,8 @@ resource "aws_route_table" "fortinet_private_rt" {
   }
 }
 
-### move--Fortinet VPC
-resource "aws_route_table" "fortinet_transit_rt" {
-  vpc_id = aws_vpc.vpc_fortinet.id
-  route {
-    cidr_block           = "0.0.0.0/0"
-    network_interface_id = aws_network_interface.fgta-private-a-eni.id
-  }
-  tags = {
-    Name = "${var.tag_name_prefix}-vpc-fortinet-transit-rt"
-  }
-}
+### NOTE - Route Table for Fortigate ENI (Transit Route Table entry) moved to 
+### fortigate.tf so infrastructure can be deployed without the FortiGates being present.
 
 resource "aws_route_table" "fortinet_hasync_rt" {
   vpc_id = aws_vpc.vpc_fortinet.id
@@ -209,7 +200,7 @@ resource "aws_route_table_association" "mgmt_a_rt_association" {
 }
 
 resource "aws_route_table_association" "mgmt_b_rt_association" {
-  subnet_id      = aws_subnet.mgmt_a_subnet.id
+  subnet_id      = aws_subnet.mgmt_b_subnet.id
   route_table_id = aws_route_table.fortinet_mgmt_rt.id
 }
 
@@ -227,9 +218,10 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw-att-vpc-fortinet" {
   depends_on = [aws_ec2_transit_gateway.TGW-XAZ]
 }
 
-#############################################################################################################
-# VPC SPOKE1 - AZ1
-#############################################################################################################
+#################################
+# VPC SPOKE1 - Availability Zone1
+#################################
+
 resource "aws_vpc" "spoke_vpc_a" {
   cidr_block = var.spoke_vpc_a_cidr
 
@@ -239,7 +231,8 @@ resource "aws_vpc" "spoke_vpc_a" {
   }
 }
 
-# Subnets
+### Subnets
+
 resource "aws_subnet" "spoke_vpc_a_workload_a_subnet" {
   vpc_id            = aws_vpc.spoke_vpc_a.id
   cidr_block        = var.spoke_vpc_a_workload_a_subnet_cidr
@@ -260,7 +253,8 @@ resource "aws_subnet" "spoke_vpc_a_transit_a_subnet" {
   }
 }
 
-# Routes
+### Routes
+
 resource "aws_route_table" "spoke-vpc-a-workload-a-rt" {
   vpc_id = aws_vpc.spoke_vpc_a.id
 
@@ -286,7 +280,8 @@ resource "aws_route_table" "spoke-vpc-a-transit-a-rt" {
   depends_on = [aws_ec2_transit_gateway.TGW-XAZ]
 }
 
-# Route tables associations
+### Route table associations
+
 resource "aws_route_table_association" "spoke_a_workload_a_rt_association" {
   subnet_id      = aws_subnet.spoke_vpc_a_workload_a_subnet.id
   route_table_id = aws_route_table.spoke-vpc-a-workload-a-rt.id
@@ -297,7 +292,8 @@ resource "aws_route_table_association" "spoke_a_transit_a_rt_association" {
   route_table_id = aws_route_table.spoke-vpc-a-transit-a-rt.id
 }
 
-# Attachment to TGW
+### TGW - VPC Attachment
+
 resource "aws_ec2_transit_gateway_vpc_attachment" "tgw-att-spoke-vpc-a" {
   subnet_ids                                      = [aws_subnet.spoke_vpc_a_transit_a_subnet.id]
   transit_gateway_id                              = aws_ec2_transit_gateway.TGW-XAZ.id
@@ -310,9 +306,11 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw-att-spoke-vpc-a" {
   }
   depends_on = [aws_ec2_transit_gateway.TGW-XAZ]
 }
-#############################################################################################################
-# VPC SPOKE B - AZ2
-#############################################################################################################
+
+###################################
+# VPC SPOKE B - Availability Zone 2
+###################################
+
 resource "aws_vpc" "spoke_vpc_b" {
   cidr_block = var.spoke_vpc_b_cidr
 
@@ -322,7 +320,8 @@ resource "aws_vpc" "spoke_vpc_b" {
   }
 }
 
-# Subnets
+### Subnets
+
 resource "aws_subnet" "spoke_vpc_b_workload_b_subnet" {
   vpc_id            = aws_vpc.spoke_vpc_b.id
   cidr_block        = var.spoke_vpc_b_workload_b_subnet_cidr
@@ -343,7 +342,8 @@ resource "aws_subnet" "spoke_vpc_b_transit_b_subnet" {
   }
 }
 
-# Routes
+###  Routes
+
 resource "aws_route_table" "spoke-vpc-b-workload-b-rt" {
   vpc_id = aws_vpc.spoke_vpc_b.id
 
@@ -369,7 +369,8 @@ resource "aws_route_table" "spoke-vpc-b-transit-b-rt" {
   depends_on = [aws_ec2_transit_gateway.TGW-XAZ]
 }
 
-# Route tables associations
+### Route table associations
+
 resource "aws_route_table_association" "spoke_b_workload_b_rt_association" {
   subnet_id      = aws_subnet.spoke_vpc_b_workload_b_subnet.id
   route_table_id = aws_route_table.spoke-vpc-b-workload-b-rt.id
@@ -380,7 +381,8 @@ resource "aws_route_table_association" "spoke_b_transit_b_rt_association" {
   route_table_id = aws_route_table.spoke-vpc-b-transit-b-rt.id
 }
 
-# Attachment to TGW
+# TGW - VPC Attachment
+
 resource "aws_ec2_transit_gateway_vpc_attachment" "tgw-att-spoke-vpc-b" {
   subnet_ids                                      = [aws_subnet.spoke_vpc_b_transit_b_subnet.id]
   transit_gateway_id                              = aws_ec2_transit_gateway.TGW-XAZ.id

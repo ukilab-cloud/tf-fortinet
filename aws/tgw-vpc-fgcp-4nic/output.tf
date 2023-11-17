@@ -1,4 +1,7 @@
-# Output
+##############
+### Output ###
+##############
+
 output "FGT_A_MGMT_Public_IP" {
   value       = aws_eip.eip-mgmt1.public_ip
   description = "Public IP address for the Active FortiGate's MGMT interface"
@@ -27,4 +30,9 @@ output "FGT_Password" {
 output "TransitGwy_ID" {
   value       = aws_ec2_transit_gateway.TGW-XAZ.id
   description = "Transit Gateway ID"
+}
+
+output "fortigate_image_id" {
+    value = data.aws_ami.fortigate_ami.id
+    description = "Fortigate AMI Image ID"
 }
