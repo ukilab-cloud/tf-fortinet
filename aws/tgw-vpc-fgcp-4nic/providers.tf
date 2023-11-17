@@ -10,9 +10,9 @@ terraform {
 # Deployment in AWS
 ##############################################################################################################
 provider "aws" {
-# Uncomment is not using IAM Role
-#  access_key = var.access_key
-#  secret_key = var.secret_key
+# comment if using IAM Role
+  access_key = var.access_key
+  secret_key = var.secret_key
 #  region     = var.region
   # Uncomment if using AWS SSO:
   # token      = var.token

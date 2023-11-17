@@ -381,7 +381,7 @@ resource "aws_route_table_association" "spoke_b_transit_b_rt_association" {
   route_table_id = aws_route_table.spoke-vpc-b-transit-b-rt.id
 }
 
-# TGW - VPC Attachment
+### TGW - VPC Attachment
 
 resource "aws_ec2_transit_gateway_vpc_attachment" "tgw-att-spoke-vpc-b" {
   subnet_ids                                      = [aws_subnet.spoke_vpc_b_transit_b_subnet.id]
@@ -390,7 +390,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "tgw-att-spoke-vpc-b" {
   transit_gateway_default_route_table_association = false
   transit_gateway_default_route_table_propagation = false
   tags = {
-    Name     = "tgw-att-spoke-vpc-b"
+    Name     = "${var.tag_name_prefix}-tgw-att-spoke-vpc-b"
     scenario = var.scenario
   }
   depends_on = [aws_ec2_transit_gateway.TGW-XAZ]

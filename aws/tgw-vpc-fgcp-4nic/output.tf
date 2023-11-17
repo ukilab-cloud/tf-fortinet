@@ -7,14 +7,14 @@ output "FGT_A_MGMT_Public_IP" {
   description = "Public IP address for the Active FortiGate's MGMT interface"
 }
 
-output "FGT_Cluster_Public_IP" {
-  value       = aws_eip.eip-shared.public_ip
-  description = "Public IP address for the Cluster"
-}
-
 output "FGT_B_MGMT_Public_IP" {
   value       = aws_eip.eip-mgmt2.public_ip
   description = "Public IP address for the Passive FortiGate's MGMT interface"
+}
+
+output "FGT_Cluster_Public_IP" {
+  value       = aws_eip.eip-shared.public_ip
+  description = "Public IP address for the Cluster"
 }
 
 output "FGT_Username" {

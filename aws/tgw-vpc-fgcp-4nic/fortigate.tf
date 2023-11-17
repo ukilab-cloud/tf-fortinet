@@ -25,10 +25,29 @@ resource "aws_security_group" "NSG-vpc-fortinet-ssh-icmp-https" {
   }
 
   tags = {
-    Name     = "NSG-vpc-fortinet-ssh-icmp-https"
+    Name     = "${var.tag_name_prefix}-vpc-fortinet-ssh-icmp-https"
     scenario = var.scenario
   }
 }
+
+### VPC Endpoint for HA
+
+resource "aws_vpc_endpoint" "endpoint" {
+  vpc_id            = aws_vpc.vpc_fortinet.id
+  service_name      = "com.amazonaws.${var.region}.ec2"
+  vpc_endpoint_type = "Interface"
+
+  security_group_ids = [
+    aws_security_group.NSG-vpc-fortinet-ssh-icmp-https.id,
+  ]
+
+  private_dns_enabled = true
+  subnet_ids          = [aws_subnet.mgmt_a_subnet.id, aws_subnet.mgmt_b_subnet.id]
+  tags = {
+    Name = "${var.tag_name_prefix}-vpc-endpoint-fgha"
+  }
+}
+
 
 ### Determine FG AMI baed on variables and data query
 
@@ -190,7 +209,8 @@ resource "aws_network_interface" "fgtb-mgmt-b-eni" {
   }
 }
 
-### Create and attach the eip to the enis
+### Comment Out/Remove EIPS once a secure mechanism of accessing the FortiGate
+### Management interfaces is established - also remove outputs for these
 
 resource "aws_eip" "eip-mgmt1" {
   depends_on        = [aws_instance.fgta]
@@ -209,6 +229,8 @@ resource "aws_eip" "eip-mgmt2" {
     Name = "${var.tag_name_prefix}-fgtb-mgmt-eip"
   }
 }
+
+### Cluster EIP - moved between Fortigates during HA
 
 resource "aws_eip" "eip-shared" {
   depends_on        = [aws_instance.fgta]

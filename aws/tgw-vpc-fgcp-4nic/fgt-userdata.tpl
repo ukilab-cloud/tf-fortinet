@@ -8,6 +8,10 @@ MIME-Version: 1.0
 config system global
 set hostname ${fgt_id}
 end
+config system dns
+set primary 169.254.169.253
+set protocol cleartext dot
+end
 config system interface
 edit port1                            
 set alias PUBLIC
@@ -130,9 +134,6 @@ set object system.interface
 next
 edit 2
 set object router.static
-next
-edit 3
-set object firewall.vip
 next
 end
 

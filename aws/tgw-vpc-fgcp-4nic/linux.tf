@@ -63,7 +63,7 @@ resource "aws_security_group" "NSG-spoke-a-ssh-icmp-https" {
   }
 
   tags = {
-    Name     = "NSG-spoke-a-ssh-icmp-https"
+    Name     = "${var.tag_name_prefix}-spoke-a-ssh-icmp-https"
     scenario = var.scenario
   }
 }
@@ -102,7 +102,7 @@ resource "aws_security_group" "NSG-spoke-b-ssh-icmp-https" {
   }
 
   tags = {
-    Name     = "NSG-spoke-b-ssh-icmp-https"
+    Name     = "${var.tag_name_prefix}-spoke-b-ssh-icmp-https"
     scenario = var.scenario
   }
 }
